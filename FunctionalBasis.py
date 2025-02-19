@@ -21,6 +21,12 @@ class AbstractBasis(ABC):
         """
         pass
 
+    @abstractmethod
+    def HBasis(self, x: np.ndarray) -> np.ndarray:
+        """
+        :return: ndarray like, gives the orthogonal basis values
+        """
+        pass
 
 
 class FourierBasis(AbstractBasis):
@@ -45,8 +51,10 @@ class FourierBasis(AbstractBasis):
             raise ValueError(f"Invalid kind: {kind}")
 
 
-
     def evaluate_basis(self, x):
+        """
+        Evaluate the value of basis for a given x
+        """
         x = np.array(x, ndmin=1)
         n_points = x.shape[0]
 
@@ -61,16 +69,24 @@ class FourierBasis(AbstractBasis):
 
         elif self.kind == 'sin':
             for k in range(1, self.order + 1):
-                B[:, k - 1] = np.sin(2 * np.pi * k * x)
+                B[:, k - 1] = np.sin(np.pi * k * x)
         elif self.kind == 'cos':
             for k in range(1, self.order + 1):
-                B[:, k - 1] = np.cos(2 * np.pi * k * x)
+                B[:, k - 1] = np.cos(np.pi * k * x)
 
         return B
+
 
     def dim_basis(self):
         return self._dim_basis
 
+
+    def HBasis(self, x: np.ndarray) -> np.ndarray:
+        """
+        This function does similar with self.evaluate_basis(x), but will
+        return orthogonal basis values.
+        """
+        return np.sqrt(2) * self.evaluate_basis(x)
 
 
 class LegendreBasis(AbstractBasis):
@@ -103,10 +119,18 @@ class LegendreBasis(AbstractBasis):
     def dim_basis(self):
         return self._dim_basis
 
+    def HBasis(self, x: np.ndarray) -> np.ndarray:
+        """
+        This function does similar with self.evaluate_basis(x), but will
+        return orthogonal basis values (with weight 1).
+        """
+        normalizer = [np.sqrt((2 * k + 1) / 2) for k in range(1, self.order + 1)]
+        return self.evaluate_basis(x) @ normalizer
+
 
 class ChebyshevBasis(AbstractBasis):
     """
-    One dimensional Chebyshev basis
+    One dimensional Chebyshev polynomials of the first kind basis
     - [T_0(x), T_1(x), ..., T_order(x)].
     Note that x should be within interval [-1, 1]
     """
@@ -130,3 +154,10 @@ class ChebyshevBasis(AbstractBasis):
 
     def num_basis(self):
         return self._dim_basis
+
+    def HBasis(self, x: np.ndarray) -> np.ndarray:
+        """
+        Chebyshev polynomials without concerning normalizers
+        """
+        return self.evaluate_basis(x)
+

@@ -17,3 +17,10 @@ class AbstractBasis(ABC):
         :return: the dimension of the basis
         """
         pass
+
+    @abstractmethod
+    def HBasis(self, x: np.ndarray) -> np.ndarray:
+        """
+        :return: ndarray like, gives the orthogonal basis values
+        """
+        pass

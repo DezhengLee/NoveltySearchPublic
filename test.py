@@ -6,10 +6,12 @@ import FunctionalBasis as fb
 import FunctionCombiner as fc
 from Hmap import *
 
+import pywt
+
 
 
 if __name__ == '__main__':
-    num_steps = 30000
+    num_steps = 21
     alpha = 1
     beta = 0.5
     scale = 0.001
@@ -38,7 +40,8 @@ if __name__ == '__main__':
     alphaH = 0.4
     zsteps = 100
     zlist = np.linspace(0, 1, zsteps)
-    Hres = flight.heatmapData()
+
+    Hres = func.heatmapData()
 
     plt.figure(figsize=(8, 6))
     heatmap(Hres)

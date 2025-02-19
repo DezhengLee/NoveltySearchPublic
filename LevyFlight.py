@@ -79,15 +79,3 @@ class LevyFlight:
             self.path[i] = self.path[i - 1] + directions[i] * self.scale * step_len
 
         return self.path
-
-    def _H(self, z: np.ndarray, alpha: float) -> float:
-        if np.any((z < 0) | (z > 1)):
-            raise ValueError('z must be between 0 and 1')
-        k_vals = np.arange(1, self.dim + 1)
-        coeffs = np.sqrt(2) * k_vals ** (-alpha)
-
-        return np.einsum('jk,zk->zj', self.path[:, :self.dim], coeffs * np.cos(np.outer(z, k_vals) * np.pi))
-
-    def heatmapData(self, alphaH = 0.5, zsteps = 100):
-        zlist = np.linspace(0, 1, zsteps)
-        return self._H(zlist, alphaH)
